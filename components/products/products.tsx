@@ -23,7 +23,7 @@ export default function Products({ variants }: ProductTypes) {
       )
     }
     return variants
-  }, [paramTag])
+  }, [paramTag, variants])
 
   return (
     <main className="grid sm:grid-cols-1 md:grid-cols-2 gap-12 lg:grid-cols-3">

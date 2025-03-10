@@ -33,7 +33,7 @@ export const EmailVerificationForm = () => {
 
   useEffect(() => {
     handleVerification()
-  }, [])
+  }, [handleVerification])
 
   return (
     <AuthCard

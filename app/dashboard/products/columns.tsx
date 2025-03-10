@@ -43,19 +43,19 @@ type ProductColum = {
 
     const ActionCell = ({row}: {row: Row<ProductColum>}) => {
       const router = useRouter();
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      
       const {execute, status} = useAction(deleteProduct, {
         onSuccess: (data) => {
-          if(data.data?.success) {
+          if(data.success) {
             toast.dismiss(); // Закриваємо лоадінг перед показом success/error
-            toast.success(data.data.success)
+            toast.success(data.success)
             router.refresh();
             
         }
-        if(data.data?.error) {
+        if(data.error) {
           
           toast.dismiss(); // Закриваємо лоадінг перед показом success/error
-            toast.error(data.data.error)
+            toast.error(data.error)
         }
         }, 
         onExecute: () => {

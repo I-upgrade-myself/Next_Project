@@ -50,7 +50,7 @@ const Tiptap = ({ val }: { val: string }) => {
 
   useEffect(() => {
     if (editor?.isEmpty) editor.commands.setContent(val)
-  }, [val])
+  }, [editor?.commands, editor?.isEmpty, val])
 
   return (
     <div className="flex flex-col gap-2">

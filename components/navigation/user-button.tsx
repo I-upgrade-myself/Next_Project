@@ -12,11 +12,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Image from "next/image"
-import { Suspense, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { LogOut, Moon, Settings, Sun, Truck, TruckIcon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Switch } from "../ui/switch"
-import Link from "next/link"
+
 import { useRouter } from "next/navigation"
 
 export const UserButton = ({ user }: Session) => {
@@ -37,7 +37,7 @@ export const UserButton = ({ user }: Session) => {
 
   useEffect(() => {
     setSwitchState()
-  }, [])
+  }, [setSwitchState])
 
   if (user)
     return (

@@ -46,7 +46,7 @@ export default function Earnings({
     if (filter === "month") {
       return monthly
     }
-  }, [filter])
+  }, [chartItems, filter])
 
   const activeTotal = useMemo(() => {
     if (filter === "month") {

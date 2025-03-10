@@ -1,4 +1,3 @@
-import Algolia from "@/components/products/algolia"
 import ProductTags from "@/components/products/product-tags"
 import Products from "@/components/products/products"
 import { db } from "@/server"
