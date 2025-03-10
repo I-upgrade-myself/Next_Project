@@ -1,1 +1,0 @@
-ALTER TABLE "email_tokens" ALTER COLUMN "id" DROP NOT NULL;

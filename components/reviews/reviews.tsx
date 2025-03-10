@@ -8,7 +8,7 @@ import ReviewChart from "./review-chart"
 export default async function Reviews({ productID }: { productID: number }) {
   const data = await db.query.reviews.findMany({
     with: { user: true },
-    where: eq(reviews.productID, productID),
+    where: eq(reviews.productId, productID),
     orderBy: [desc(reviews.created)],
   })
 
@@ -24,6 +24,6 @@ export default async function Reviews({ productID }: { productID: number }) {
           <ReviewChart reviews={data} />
         </div>
       </div>
-    </section>
+    </section> 
   )
 }

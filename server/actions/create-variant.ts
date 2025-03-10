@@ -34,6 +34,15 @@ export const createVariant = action(
     variantImages: newImgs,
   }) => {
     try {
+      console.log("Received data:", {
+        color,
+        editMode,
+        id,
+        productID,
+        productType,
+        tags,
+        newImgs,
+      });
       if (editMode && id) {
         const editVariant = await db
           .update(productVariants)
@@ -42,50 +51,55 @@ export const createVariant = action(
           .returning()
         await db
           .delete(variantTags)
-          .where(eq(variantTags.variantID, editVariant[0].id))
+          .where(eq(variantTags.variantId, editVariant[0].id))
         await db.insert(variantTags).values(
           tags.map((tag) => ({
             tag,
-            variantID: editVariant[0].id,
+            variantId: editVariant[0].id,
           }))
         )
+        console.log("Updated variant:", editVariant);
         await db
           .delete(variantImages)
-          .where(eq(variantImages.variantID, editVariant[0].id))
+          .where(eq(variantImages.variantId, editVariant[0].id))
         await db.insert(variantImages).values(
           newImgs.map((img, idx) => ({
             name: img.name,
             size: img.size,
             url: img.url,
-            variantID: editVariant[0].id,
+            variantId: editVariant[0].id,
             order: idx,
           }))
         )
         algoliaIndex.partialUpdateObject({
           objectID: editVariant[0].id.toString(),
-          id: editVariant[0].productID,
+          id: editVariant[0].productId,
           productType: editVariant[0].productType,
           variantImages: newImgs[0].url,
         })
         revalidatePath("/dashboard/products")
         return { success: `Edited ${productType}` }
       }
+      
       if (!editMode) {
         const newVariant = await db
           .insert(productVariants)
           .values({
             color,
             productType,
-            productID,
+            productId: productID, 
           })
           .returning()
+          console.log("Created new variant:", newVariant[0].id);
+          console.log("Created new variant:", newVariant);
         const product = await db.query.products.findFirst({
           where: eq(products.id, productID),
         })
+        console.log("Inserted variantTags:", tags);
         await db.insert(variantTags).values(
           tags.map((tag) => ({
             tag,
-            variantID: newVariant[0].id,
+            variantId: newVariant[0].id,
           }))
         )
         await db.insert(variantImages).values(
@@ -93,25 +107,29 @@ export const createVariant = action(
             name: img.name,
             size: img.size,
             url: img.url,
-            variantID: newVariant[0].id,
+            variantId: newVariant[0].id,
             order: idx,
           }))
         )
+        console.log("Inserted variantImages:", newImgs);
         if (product) {
           algoliaIndex.saveObject({
             objectID: newVariant[0].id.toString(),
-            id: newVariant[0].productID,
+            id: newVariant[0].productId,
             title: product.title,
             price: product.price,
             productType: newVariant[0].productType,
             variantImages: newImgs[0].url,
           })
+          console.log("Updated Algolia index");
         }
         revalidatePath("/dashboard/products")
         return { success: `Added ${productType}` }
       }
     } catch (error) {
+      console.error("Error creating variant:", error);
       return { error: "Failed to create variant" }
     }
   }
 )
+

@@ -1,7 +1,7 @@
 import * as z from "zod"
 
 export const reviewSchema = z.object({
-  productID: z.number(),
+  productId: z.number(),
   rating: z
     .number()
     .min(1, { message: "Please add at least one star" })

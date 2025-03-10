@@ -31,14 +31,15 @@ import { toast } from "sonner"
 
 export default function ReviewsForm() {
   const params = useSearchParams()
-  const productID = Number(params.get("productID"))
-
+  const productId = Number(params.get("productID"))
+  
+  
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
     defaultValues: {
       rating: 0,
       comment: "",
-      productID,
+      productId,
     },
   })
 
@@ -56,10 +57,11 @@ export default function ReviewsForm() {
   })
 
   function onSubmit(values: z.infer<typeof reviewSchema>) {
+    
     execute({
       comment: values.comment,
       rating: values.rating,
-      productID,
+      productId,
     })
   }
 

@@ -1,1 +1,0 @@
-ALTER TABLE "verificationToken" DROP CONSTRAINT "verificationToken_token_unique";

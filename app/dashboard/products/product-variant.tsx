@@ -64,7 +64,7 @@ export const ProductVariant = forwardRef<HTMLDivElement, VariantProps>(
       if (editMode && variant) {
         form.setValue("editMode", true)
         form.setValue("id", variant.id)
-        form.setValue("productID", variant.productID)
+        form.setValue("productID", variant.productId)
         form.setValue("productType", variant.productType)
         form.setValue("color", variant.color)
         form.setValue(
@@ -75,7 +75,7 @@ export const ProductVariant = forwardRef<HTMLDivElement, VariantProps>(
           "variantImages",
           variant.variantImages.map((img) => ({
             name: img.name,
-            size: img.size,
+            size: parseInt(img.size),
             url: img.url,
           }))
         )
@@ -89,14 +89,18 @@ export const ProductVariant = forwardRef<HTMLDivElement, VariantProps>(
     const { execute, status } = useAction(createVariant, {
       onExecute() {
         toast.loading("Creating variant", { duration: 1 })
+        toast.dismiss();
         setOpen(false)
       },
       onSuccess(data) {
         if (data?.error) {
           toast.error(data.error)
+           
         }
         if (data?.success) {
+           
           toast.success(data.success)
+          toast.dismiss();
         }
       },
     })
@@ -119,7 +123,7 @@ export const ProductVariant = forwardRef<HTMLDivElement, VariantProps>(
     function onSubmit(values: z.infer<typeof VariantSchema>) {
       // Do something with the form values.
       // ✅ This will be type-safe and validated.
-
+       
       execute(values)
     }
 

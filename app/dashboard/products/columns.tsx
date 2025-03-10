@@ -8,8 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
@@ -18,85 +16,91 @@ import { deleteProduct } from "@/server/actions/delete-product"
 import { toast } from "sonner"
 import Link from "next/link"
 import { VariantsWithImagesTags } from "@/lib/infer-type"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { ProductVariant } from "./product-variant"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import {ProductVariant} from "./product-variant"
+import { useRouter } from "next/navigation"; 
 
-type ProductColumn = {
-  title: string
-  price: number
-  image: string
-  variants: VariantsWithImagesTags[]
-  id: number
+type ProductColum = {
+    title: string,
+    price: number,    
+    variants: VariantsWithImagesTags[],
+    id: number,
+    
 }
+// async function deleteProductWrapper (id:number) {
+//     const data = await deleteProduct({id})
+//     if(!data) {
+//         return  new Error("No data found")
+//     }
+//     if(data.data?.success) {
+//         toast.success(data.data.success)
+//     }
+//     if(data.data?.error) {
+//         toast.success(data.data.error)
+//     }
+// }
 
-const ActionCell = ({ row }: { row: Row<ProductColumn> }) => {
-  const { status, execute } = useAction(deleteProduct, {
-    onSuccess: (data) => {
-      if (data?.error) {
-        toast.error(data.error)
-      }
-      if (data?.success) {
-        toast.success(data.success)
-      }
-    },
-    onExecute: () => {
-      toast.loading("Deleting Product")
-    },
-  })
-  const product = row.original
 
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant={"ghost"} className="h-8 w-8 p-0">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem className="dark:focus:bg-primary focus:bg-primary/50 cursor-pointer">
-          <Link href={`/dashboard/add-product?id=${product.id}`}>
-            Edit Product
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => execute({ id: product.id })}
-          className="dark:focus:bg-destructive focus:bg-destructive/50 cursor-pointer"
-        >
-          Delete Product
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
-}
+    const ActionCell = ({row}: {row: Row<ProductColum>}) => {
+      const router = useRouter();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {execute, status} = useAction(deleteProduct, {
+        onSuccess: (data) => {
+          if(data.data?.success) {
+            toast.dismiss(); // Закриваємо лоадінг перед показом success/error
+            toast.success(data.data.success)
+            router.refresh();
+            
+        }
+        if(data.data?.error) {
+          
+          toast.dismiss(); // Закриваємо лоадінг перед показом success/error
+            toast.error(data.data.error)
+        }
+        }, 
+        onExecute: () => {
+          toast.dismiss(); // Закриваємо лоадінг перед показом success/error
+          toast.loading("Deleting Product")
+        }
+      })
+        const product = row.original;
+        return  (
+          <DropdownMenu>
+          <DropdownMenuTrigger asChild><Button variant={'ghost'} className="h-8 w-8 p-0"><MoreHorizontal className="h-4 w-4"></MoreHorizontal></Button></DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem className="dark:focus:bg-primary focus:bg-primary/50 cursor-pointer"><Link href={`/dashboard/add-product?id=${product.id}`}>Edit Product</Link></DropdownMenuItem>
+            <DropdownMenuItem onClick={() => execute({id: product.id})} className="dark:focus:bg-destructive focus:bg-destructive/50 cursor-pointer">Delete Product</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+      )
+    }
 
-export const columns: ColumnDef<ProductColumn>[] = [
-  {
-    accessorKey: "id",
+export const columns: ColumnDef<ProductColum>[] = [
+ {
+  accessorKey: "id",
     header: "ID",
-  },
-  {
-    accessorKey: "title",
+ },
+ {
+  accessorKey: "title",
     header: "Title",
-  },
-  {
+ },
+ {
     accessorKey: "variants",
     header: "Variants",
     cell: ({ row }) => {
-      const variants = row.getValue("variants") as VariantsWithImagesTags[]
+      const variants = row.getValue("variants") as VariantsWithImagesTags[];
+      console.log(variants);
+      
       return (
         <div className="flex gap-2">
           {variants.map((variant) => (
             <div key={variant.id}>
-              <TooltipProvider>
+              <TooltipProvider key={variant.id}>
                 <Tooltip>
-                  <TooltipTrigger asChild>
+                  <TooltipTrigger  asChild>
                     <ProductVariant
-                      productID={variant.productID}
+                      productID={variant.productId}
                       variant={variant}
                       editMode={true}
                     >
@@ -115,57 +119,53 @@ export const columns: ColumnDef<ProductColumn>[] = [
             </div>
           ))}
           <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>
-                  <ProductVariant productID={row.original.id} editMode={false}>
-                    <PlusCircle className="h-5 w-5" />
-                  </ProductVariant>
-                </span>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Create a new product variant</p>
-              </TooltipContent>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+              <ProductVariant productID={row.original.id} editMode={false}>
+                <PlusCircle className="h-5 w-5"/>
+              </ProductVariant>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Create a new product variant</p>
+            </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
-        </div>
-      )
+            </TooltipProvider>
+              </div>
+      );
     },
   },
-  {
-    accessorKey: "price",
+ {
+  accessorKey: "price",
     header: "Price",
-    cell: ({ row }) => {
-      const price = parseFloat(row.getValue("price"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        currency: "USD",
-        style: "currency",
-      }).format(price)
-      return <div className="font-medium text-xs">{formatted}</div>
-    },
-  },
-  {
-    accessorKey: "image",
+    cell: ({row}) => {
+        const price = parseFloat(row.getValue("price"))
+        const formatted = new Intl.NumberFormat('en-US', {
+            currency: "USD",
+            style: "currency"
+        }).format(price)
+        return (
+            <div className={"font-medium text-xs"}>{formatted}</div>
+        )
+    }
+ },
+ {
+  accessorKey: "image",
     header: "Image",
-    cell: ({ row }) => {
-      const cellImage = row.getValue("image") as string
-      const cellTitle = row.getValue("title") as string
-      return (
-        <div className="">
-          <Image
-            src={cellImage}
-            alt={cellTitle}
-            width={50}
-            height={50}
-            className="rounded-md"
-          />
-        </div>
-      )
-    },
-  },
-  {
-    id: "actions",
+    cell: ({row}) => {
+        const cellImage = row.getValue("image") as string
+        const cellTitle = row.getValue("title") as string
+        // console.log(cellImage);
+        
+        return (
+            <div className=""><Image src={cellImage} alt={cellTitle} width={50} height={50} className="rounded-md"/></div>
+        )
+    }
+ },
+ {
+  accessorKey: "actions",
     header: "Actions",
     cell: ActionCell,
-  },
+ }
 ]

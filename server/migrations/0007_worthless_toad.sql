@@ -1,1 +1,0 @@
-ALTER TABLE "emailTokens" DROP CONSTRAINT "emailTokens_token_unique";

@@ -48,7 +48,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
     const reviewAvg = getReviewAverage(
       variant?.product.reviews.map((r) => r.rating)
     )
-
+    
+    
     return (
       <main>
         <section className="flex flex-col lg:flex-row gap-4 lg:gap-12">
@@ -78,7 +79,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
               {variant.product.productVariants.map((prodVariant) => (
                 <ProductPick
                   key={prodVariant.id}
-                  productID={variant.productID}
+                  productID={variant.productId}
                   productType={prodVariant.productType}
                   id={prodVariant.id}
                   color={prodVariant.color}
@@ -91,7 +92,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
             <AddCart />
           </div>
         </section>
-        <Reviews productID={variant.productID} />
+        <Reviews productID={variant.productId} />
       </main>
     )
   }

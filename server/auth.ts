@@ -72,9 +72,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       allowDangerousEmailAccountLinking: true,
     }),
     Github({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-      allowDangerousEmailAccountLinking: true,
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      // allowDangerousEmailAccountLinking: true,
     }),
     Credentials({
       authorize: async (credentials) => {

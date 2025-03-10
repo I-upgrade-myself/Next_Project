@@ -31,11 +31,12 @@ export default function Products({ variants }: ProductTypes) {
         <Link
           className="py-2"
           key={variant.id}
-          href={`/products/${variant.id}?id=${variant.id}&productID=${variant.productID}&price=${variant.product.price}&title=${variant.product.title}&type=${variant.productType}&image=${variant.variantImages[0].url}`}
+          href={`/products/${variant.id}?id=${variant.id}&productID=${variant.productId}&price=${variant.product.price}&title=${variant.product.title}&type=${variant.productType}&image=${variant.variantImages.length > 0 ? variant.variantImages[0].url : ''}`}
+
         >
           <Image
             className="rounded-md pb-2"
-            src={variant.variantImages[0].url}
+            src={variant.variantImages && variant.variantImages.length > 0 ? variant.variantImages[0].url : '/path/to/default/image.jpg'}
             width={720}
             height={480}
             alt={variant.product.title}
